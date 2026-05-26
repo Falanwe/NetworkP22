@@ -1,3 +1,3 @@
 ﻿using Asynchronism;
 
-EventsDemo.Run();
+CoroutinesDemo.Run();
