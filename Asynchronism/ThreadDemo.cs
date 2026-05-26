@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Asynchronism
 {
-    internal class Threads
+    internal class ThreadDemo
     {
 
 
@@ -25,26 +25,27 @@ namespace Asynchronism
             return number + 1;
         }
 
-        public void Run()
+        public static void Run()
         {
-            ParameterizedThreadStart myThreadDelegate = (object? o) =>
+            int maxExecutionTime = 2000;
+            void DoLongWork (object? o)
             {
                 var threadName = o as string ?? "";
-                var time = Random.Shared.Next(2000);
+                var time = Random.Shared.Next(maxExecutionTime);
                 Thread.Sleep(time);
                 Console.WriteLine($"Hello world from thread {threadName} after {time} ms!");
             };
 
-            var t1 = new System.Threading.Thread(myThreadDelegate);
+            var t1 = new System.Threading.Thread(DoLongWork);
             t1.Start("1");
 
-            var t2 = new System.Threading.Thread(myThreadDelegate);
+            var t2 = new System.Threading.Thread(DoLongWork);
             t2.Start("2");
 
-            var t3 = new System.Threading.Thread(myThreadDelegate);
+            var t3 = new System.Threading.Thread(DoLongWork);
             t3.Start("3");
 
-            var t4 = new System.Threading.Thread(myThreadDelegate);
+            var t4 = new System.Threading.Thread(DoLongWork);
             t4.Start("4");
 
             t1.Join();
