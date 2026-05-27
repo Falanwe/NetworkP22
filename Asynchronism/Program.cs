@@ -1,3 +1,3 @@
 ﻿using Asynchronism;
 
-TaskDemos.RunWithoutAsync();
+await AdditionGame.Run();
