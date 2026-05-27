@@ -19,7 +19,7 @@ namespace Asynchronism
         public long Value3 { get; }
         public long Value4 { get; }
     }
-       
+
 
     internal class TearingDemo
     {
@@ -36,13 +36,13 @@ namespace Asynchronism
                 }
             }
 
-            for(var i = 0L; i < 4; i++)
+            for (var i = 0L; i < 4; i++)
             {
                 ThreadPool.QueueUserWorkItem(parameter => WriteIndefinitely((long)parameter), i);
             }
 
             var counter = 0;
-            while(true)
+            while (true)
             {
                 counter++;
 
@@ -58,6 +58,30 @@ namespace Asynchronism
                     break;
                 }
             }
+        }
+
+        public static async Task ShowIncrementIssue()
+        {
+            var counter = 0;
+
+            void IncrementALot()
+            {
+                for (var i = 0; i < 10_000; i++)
+                {
+                    Interlocked.Increment(ref counter);
+                }
+            }
+
+            List<Task> tasks = new List<Task>();
+            for (var i = 0; i < 4; i++)
+            {
+                tasks.Add(Task.Run(IncrementALot));
+            }
+
+            await Task.WhenAll(tasks);
+
+            Console.WriteLine($"counter: {counter}");
+
         }
     }
 }

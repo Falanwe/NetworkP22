@@ -1,3 +1,3 @@
 ﻿using Asynchronism;
 
-TearingDemo.Run();
+await AdditionGame.Run();

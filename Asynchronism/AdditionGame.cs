@@ -12,42 +12,60 @@ namespace Asynchronism
         private static int _redValue = 0;
 
 #if RED_AND_YELLOW
-        private static readonly object _lock = new object();
+        private static readonly object _synchRoot = new object();
 
 
-        private static async Task UpdateYellowValue()
+        private static async Task UpdateYellowValue(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 _yellowValue = Random.Shared.Next(100);
-                lock (_lock)
+                lock (_synchRoot)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine(_yellowValue);
                     Console.ResetColor();
                 }
-                await Task.Delay(Random.Shared.Next(1000, 7000));                
+                try
+                {
+                    await Task.Delay(Random.Shared.Next(4000, 10_000), token);
+                }
+                catch (TaskCanceledException )
+                {
+                    // ignore
+                }
             }
+            Console.WriteLine("UpdateYellowValue stopped");
         }
 
-        private static async Task UpdateRedValue()
+        private static async Task UpdateRedValue(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
-                _redValue = Random.Shared.Next(100);                
-                lock (_lock)
+                _redValue = Random.Shared.Next(100);
+                lock (_synchRoot)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(_redValue);
                     Console.ResetColor();
                 }
-                await Task.Delay(Random.Shared.Next(1000, 7000));
+                try
+                {
+                    await Task.Delay(Random.Shared.Next(4000, 10_000), token);
+                }
+                catch (TaskCanceledException)
+                {
+                    // ignore
+                }
             }
+            Console.WriteLine("UpdateRedValue stopped");
         }
 #endif
 
         public static async Task Run()
         {
+            using var cts = new CancellationTokenSource();
+
             Console.WriteLine("Press Enter to start the addition game...");
 
             Console.ReadLine();
@@ -59,8 +77,8 @@ namespace Asynchronism
 #if RED_AND_YELLOW
             Console.WriteLine($"What is red + yellow?");
 
-            _ = UpdateRedValue();
-            _ = UpdateYellowValue();
+            _ = UpdateRedValue(cts.Token);
+            _ = UpdateYellowValue(cts.Token);
 #else
             _redValue = Random.Shared.Next(100);
             _yellowValue = Random.Shared.Next(100);
@@ -77,7 +95,8 @@ namespace Asynchronism
                 {
                     watch.Stop();
                     Console.WriteLine($"Correct! You took {watch.ElapsedMilliseconds} ms");
-                    
+
+                    cts.Cancel();
                     break;
                 }
                 else
@@ -85,6 +104,8 @@ namespace Asynchronism
                     Console.WriteLine($"Wrong!");
                 }
             }
+
+            Console.ReadLine();
         }
     }
 }
