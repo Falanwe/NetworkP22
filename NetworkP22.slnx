@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="Asynchronism/Asynchronism.csproj" />
+  <Project Path="FileServer/FileServer.csproj" Id="f699804e-9daf-43f8-b5f4-cb7b510ec13a" />
+  <Project Path="FileServerClient/FileServerClient.csproj" Id="76e0e4e9-57c1-45f6-bf29-676eb922f9f1" />
   <Project Path="TcpClient/TcpClient.csproj" Id="42aa6c79-ed0b-4557-bd16-591195bf4ee4" />
   <Project Path="TcpServer/TcpServer.csproj" Id="9e6524df-4338-41d4-afc7-dc7ff7ad31ec" />
   <Project Path="UdpClient/UdpClient.csproj" Id="d633d3fe-2f95-410c-8841-0be742cf2c97" />
