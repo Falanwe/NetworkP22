@@ -1,4 +1,6 @@
 <Solution>
   <Project Path="Asynchronism/Asynchronism.csproj" />
+  <Project Path="TcpClient/TcpClient.csproj" Id="42aa6c79-ed0b-4557-bd16-591195bf4ee4" />
+  <Project Path="TcpServer/TcpServer.csproj" Id="9e6524df-4338-41d4-afc7-dc7ff7ad31ec" />
   <Project Path="UdpClient/UdpClient.csproj" Id="d633d3fe-2f95-410c-8841-0be742cf2c97" />
 </Solution>
