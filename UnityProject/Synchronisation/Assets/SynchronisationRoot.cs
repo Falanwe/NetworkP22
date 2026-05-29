@@ -22,7 +22,14 @@ public class SynchronisationRoot : MonoBehaviour
         _client = new SynchronisationClient();
         _cancellationTokenSource = new CancellationTokenSource();
         _client.UpdateReceived += OnUpdateReceived;
-        _ = _client.Run(_cancellationTokenSource.Token);
+        _ = _client.Run(_cancellationTokenSource.Token)
+            .ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                {
+                    Debug.LogError($"Error in client: {t.Exception}");
+                }
+            });
         _client.ConnectToServer(ServerHost, ServerPort);
     }
 
@@ -42,7 +49,7 @@ public class SynchronisationRoot : MonoBehaviour
             BitConverter.TryWriteBytes(span[(4 * sizeof(float))..(5 * sizeof(float))], SynchronizedObject.rotation.y);
             BitConverter.TryWriteBytes(span[(5 * sizeof(float))..(6 * sizeof(float))], SynchronizedObject.rotation.z);
 
-            _client.SendUpdate(BitConverter.GetBytes(Time.time));
+            _client.SendUpdate(_sendBuffer);
             _lastSentTime = Time.time;
         }
     }
