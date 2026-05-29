@@ -6,6 +6,7 @@
 # See: https://github.com/github/gitignore/tree/main/Global
 #
 !/[Pp]ackages/*
+!*.meta
 
 .utmp/
 /[Ll]ibrary/
