@@ -45,9 +45,9 @@ public class SynchronisationRoot : MonoBehaviour
             BitConverter.TryWriteBytes(span[(0 * sizeof(float))..(1 * sizeof(float))], SynchronizedObject.position.x);
             BitConverter.TryWriteBytes(span[(1 * sizeof(float))..(2 * sizeof(float))], SynchronizedObject.position.y);
             BitConverter.TryWriteBytes(span[(2 * sizeof(float))..(3 * sizeof(float))], SynchronizedObject.position.z);
-            BitConverter.TryWriteBytes(span[(3 * sizeof(float))..(4 * sizeof(float))], SynchronizedObject.rotation.x);
-            BitConverter.TryWriteBytes(span[(4 * sizeof(float))..(5 * sizeof(float))], SynchronizedObject.rotation.y);
-            BitConverter.TryWriteBytes(span[(5 * sizeof(float))..(6 * sizeof(float))], SynchronizedObject.rotation.z);
+            BitConverter.TryWriteBytes(span[(3 * sizeof(float))..(4 * sizeof(float))], SynchronizedObject.eulerAngles.x);
+            BitConverter.TryWriteBytes(span[(4 * sizeof(float))..(5 * sizeof(float))], SynchronizedObject.eulerAngles.y);
+            BitConverter.TryWriteBytes(span[(5 * sizeof(float))..(6 * sizeof(float))], SynchronizedObject.eulerAngles.z);
 
             _client.SendUpdate(_sendBuffer);
             _lastSentTime = Time.time;
@@ -69,16 +69,16 @@ public class SynchronisationRoot : MonoBehaviour
         var transform = go.transform;
 
 
-        transform.position = new Vector3(
+        transform.position = new(
             BitConverter.ToSingle(span[(0 * sizeof(float))..(1 * sizeof(float))]),
             BitConverter.ToSingle(span[(1 * sizeof(float))..(2 * sizeof(float))]),
             BitConverter.ToSingle(span[(2 * sizeof(float))..(3 * sizeof(float))])
             );
 
-        transform.rotation = Quaternion.Euler(
+        transform.eulerAngles = new(
             BitConverter.ToSingle(span[(3 * sizeof(float))..(4 * sizeof(float))]),
             BitConverter.ToSingle(span[(4 * sizeof(float))..(5 * sizeof(float))]),
-            BitConverter.ToSingle(span[(5 * sizeof(float))..(6 * sizeof(float))])            
+            BitConverter.ToSingle(span[(5 * sizeof(float))..(6 * sizeof(float))])
             );
     }
 
