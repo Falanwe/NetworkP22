@@ -66,13 +66,16 @@ namespace SynchronisationServer
                                 break;
                             }
                         default:
-                            Console.WriteLine("Unknown client action!");
                             break;
                     }
                 }
                 catch (OperationCanceledException ex) when (ex.CancellationToken == token)
                 {
                     // shutdown
+                }
+                catch (Exception)
+                {
+                    // TODO: Pokemon!
                 }
             }
         }
