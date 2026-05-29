@@ -37,6 +37,7 @@ namespace SynchronisationServer
                                 span[0] = (byte)ServerAction.SendClientId;
                                 BitConverter.TryWriteBytes(span[1..3], clientId);
                                 await _server.SendAsync(rent.Memory, result.RemoteEndPoint, token);
+                                Console.WriteLine($"Registered client {result.RemoteEndPoint} with id {clientId}");
                                 break;
                             }
                         case ClientAction.SendUpdate:
