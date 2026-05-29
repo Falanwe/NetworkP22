@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\UnityProject\Synchronisation\Assets\NetworkCode\ClientAction.cs" Link="Shared\ClientAction.cs" />
+    <Compile Include="..\UnityProject\Synchronisation\Assets\NetworkCode\ServerActions.cs" Link="Shared\ServerActions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Shared\" />
+  </ItemGroup>
+
+</Project>
