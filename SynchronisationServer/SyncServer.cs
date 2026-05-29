@@ -14,7 +14,7 @@ namespace SynchronisationServer
 
         private readonly UdpClient _server = new(668);
         private int _nextClientId = 0;
-        private Dictionary<IPEndPoint, ushort> _clientIds = [];
+        private Dictionary<string, ushort> _clientIds = [];
 
         public async Task Serve(CancellationToken token)
         {
@@ -30,7 +30,7 @@ namespace SynchronisationServer
                                 var clientId = (ushort)Interlocked.Increment(ref _nextClientId);
                                 lock (_clientIds)
                                 {
-                                    _clientIds[result.RemoteEndPoint] = clientId;
+                                    _clientIds[result.RemoteEndPoint.ToString()] = clientId;
                                 }
                                 using var rent = MemoryPool<byte>.Shared.Rent(3);
                                 var span = rent.Memory.Span;
@@ -42,16 +42,17 @@ namespace SynchronisationServer
                             }
                         case ClientAction.SendUpdate:
                             {
-                                IPEndPoint[] endpoints;
+                                string[] endpoints;
                                 ushort currentClientId;
+                                var endpointString = result.RemoteEndPoint.ToString();
                                 lock (_clientIds)
                                 {
-                                    if (!_clientIds.TryGetValue(result.RemoteEndPoint, out currentClientId))
+                                    if (!_clientIds.TryGetValue(endpointString, out currentClientId))
                                     {
                                         Console.WriteLine("Received update from unregistered client!");
                                         break;
                                     }
-                                    endpoints = _clientIds.Keys.Where(ep => ep != result.RemoteEndPoint).ToArray();
+                                    endpoints = _clientIds.Keys.Where(ep => ep != endpointString).ToArray();
                                 }
                                 using (var memoryOwner = MemoryPool<byte>.Shared.Rent(result.Buffer.Length + 2))
                                 {
@@ -60,7 +61,7 @@ namespace SynchronisationServer
                                     span[0] = (byte)ServerAction.SendUpdate;
                                     BitConverter.TryWriteBytes(span[1..3], currentClientId);
                                     result.Buffer.AsSpan().Slice(1).CopyTo(span.Slice(3));
-                                    await Task.WhenAll(endpoints.Select(async ep => await _server.SendAsync(memoryToSend, ep, token)));
+                                    await Task.WhenAll(endpoints.Select(async ep => await _server.SendAsync(memoryToSend, IPEndPoint.Parse(ep), token)));
                                 }
                                 break;
                             }
