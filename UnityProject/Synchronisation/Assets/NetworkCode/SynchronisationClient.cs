@@ -49,6 +49,7 @@ namespace Synchronisation
                 buffer = ArrayPool<byte>.Shared.Rent(data.Length+1);
                 buffer[0] = (byte)ClientAction.SendUpdate;
                 data.CopyTo(buffer[1..^0]);
+                _udpClient.Send(buffer, data.Length + 1);
             }
             finally
             {
