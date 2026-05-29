@@ -2,11 +2,14 @@ using Synchronisation;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class SynchronisationRoot : MonoBehaviour
 {
-    private SynchronisationClient _client = new();
+    private SynchronisationClient _client = null;
+    private CancellationTokenSource _cancellationTokenSource;
 
     public string ServerHost;
     public int ServerPort;
@@ -14,7 +17,10 @@ public class SynchronisationRoot : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _client = new SynchronisationClient();
+        _cancellationTokenSource = new CancellationTokenSource();
         _client.UpdateReceived += OnUpdateReceived;
+        _ = _client.Run(_cancellationTokenSource.Token);
         _client.ConnectToServer(ServerHost, ServerPort);
     }
 
@@ -34,5 +40,11 @@ public class SynchronisationRoot : MonoBehaviour
     {
         var time = BitConverter.ToSingle(data.Span);
         Debug.Log($"Received update from client {clientId} with time {time}");
+    }
+
+    private void OnApplicationQuit()
+    {
+        _cancellationTokenSource?.Cancel();
+        _client?.Dispose();
     }
 }
