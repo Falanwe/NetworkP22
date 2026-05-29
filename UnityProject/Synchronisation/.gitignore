@@ -5,6 +5,8 @@
 # Recommended: add any editor/OS/tool-specific ignore rules from the Global/ templates as needed.
 # See: https://github.com/github/gitignore/tree/main/Global
 #
+!/[Pp]ackages/*
+
 .utmp/
 /[Ll]ibrary/
 /[Tt]emp/
@@ -104,3 +106,4 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
